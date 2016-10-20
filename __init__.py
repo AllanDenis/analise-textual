@@ -3,10 +3,12 @@
 
 from collections import defaultdict
 from pprint import pprint
+from sys import argv
+from os.path import isfile
 import re
 
 def frequencias(texto, minOcorrencias=1):
-    palavras = re.split(r'\W?\s+\W?', texto)
+    palavras = re.findall(r'\S+', texto)
     palavras = [p.lower().strip() for p in palavras]
     if len(palavras) == 0: return {}
     termosComuns = set('abcdefghijklmnopqrstuvwxyz0123456789')
@@ -17,7 +19,7 @@ def frequencias(texto, minOcorrencias=1):
             'do da sem seu sua quais ou').split()))
     distFrequencia = ocorrencias = {}
     numPalavras = len(palavras)
-    tamFrase = 1
+    tamFrase = 3
     while set(ocorrencias.values()) != {1}:
         ocorrencias = defaultdict(int)
         print('Contando frases com %d palavras...' % tamFrase)
@@ -36,9 +38,14 @@ def frequencias(texto, minOcorrencias=1):
     pprint([frase[::-1] for frase in
         sorted(distFrequencia.items(),
             key=lambda x: x[1],
-            reverse=True)[:int(len(distFrequencia) * .2)]])
+            reverse=True)])
     return distFrequencia
 
 if __name__ == '__main__':
-    texto = ''''''
-    frequencias(texto, 2)
+    texto = ''
+    try:
+        if isfile(argv[1]):
+            with open(argv[1]) as arquivo:
+                frequencias(arquivo.read(), 2)
+    except IndexError as e:
+        frequencias(texto, 2)
